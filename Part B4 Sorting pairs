@@ -1,0 +1,29 @@
+""" BitCoin. Part B4 Sorting pairs via top ten Reducer | 
+"""
+from mrjob.job import MRJob
+import re
+import time
+
+class Sort(MRJob):
+
+    def mapper(self, _, line):
+        #with open("PartB3.txt") as input:
+        #    for line in input :
+        try:
+            fields = line.split(",")
+            value = float(fields[0])
+            publicKey = str(fields[1])
+            yield (1,(value, publicKey))
+
+        except :
+            pass
+
+    def reducer(self, value, publicKey):
+        sorted_values = sorted(publicKey, reverse=True, key=lambda x: x[0])[:10]
+        key = 0
+        for i in sorted_values:
+            key+=1
+            yield(key,('{}-{}'.format(float(i[0]),str(i[1]).strip())))
+
+if __name__ == '__main__':
+    Sort.run()
