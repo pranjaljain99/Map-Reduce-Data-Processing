@@ -1,0 +1,28 @@
+""" BitCoin. TOP TEN DONORS Part B1 Initial Filtering | Output :Filter.txt
+"""
+from mrjob.job import MRJob
+import re
+import time
+
+class partB(MRJob):
+
+    def mapper(self, _, line):
+        try:
+            fields = line.split(",")
+            hash = fields[0]
+            value = fields[1]
+            n = fields[2]
+            publicKey = fields[3]
+            if (publicKey =='{1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v}'):
+                combined = hash+","+value+","+n+","+publicKey
+                print (combined)
+                #yield (hash,(value, n))
+
+        except:
+            pass
+
+#    def reducer(self,day,counts):
+#        yield(day,out)
+
+if __name__ == '__main__':
+    partB.run()
