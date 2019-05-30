@@ -1,0 +1,39 @@
+""" BitCoin. TOP TEN DONORS Part B3 Second Join |
+"""
+from mrjob.job import MRJob
+from mrjob.step import MRStep
+import re
+import time
+
+class Second_Join(MRJob):
+
+    BitCoin_table = {}
+
+    def mapper_1(self):
+        with open("partB2.txt") as input:
+            for line in input :
+                fields = line.split(",")
+                tx_hash = fields[1]
+                vout = fields[2]
+                self.BitCoin_table[tx_hash] = vout
+
+    def mapper_2(self, _, line):
+        try:
+            fields = line.split(",")
+            hash = fields[0]
+            n = fields[2]
+            if hash in self.BitCoin_table:
+                combined = fields[1]+","+fields[3]
+                print(combined)
+
+        except:
+            pass
+
+    def steps(self):
+        return [MRStep(mapper_init=self.mapper_1,
+                mapper=self.mapper_2)]
+
+
+if __name__ == '__main__':
+	#First_Join.JOBCONF={'mapreduce.reduce.memory.mb':4096}
+	Second_Join.run()
