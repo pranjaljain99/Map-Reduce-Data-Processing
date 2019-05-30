@@ -1,0 +1,42 @@
+"""BitCoin. PART C. DATA EXPLORATION
+"""
+from mrjob.job import MRJob
+from mrjob.step import MRStep
+import re
+import datetime
+import time
+
+class DataExp(MRJob):
+
+    BitCoin_table = {}
+
+    def mapper_1(self):
+        with open("bitcoin_data.txt") as input:
+            for line in input :
+                fields = line.split(",")
+                Date = fields[0]
+                Amount = fields[1]
+                self.BitCoin_table[Date] = Amount
+
+    def mapper_2(self, _, line):
+        try:
+            fields = line.split(",")
+            if (len(fields)==5):
+                times = int(fields[2])
+                month = time.strftime('%d-%m-%Y',time.gmtime(times))
+                #print(month)
+                if month in self.BitCoin_table:
+                    Amount = self.BitCoin_table[month]
+                # combined = fields[1]+","+fields[3]
+                    print(fields[0]+','+fields[1]+','+month+','+fields[3]+','+fields[4]+','+Amount)
+
+        except:
+            pass
+
+    def steps(self):
+        return [MRStep(mapper_init=self.mapper_1,
+                mapper=self.mapper_2)]
+
+if __name__ == '__main__':
+	#First_Join.JOBCONF={'mapreduce.reduce.memory.mb':4096}
+	DataExp.run()
