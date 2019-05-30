@@ -1,0 +1,24 @@
+""" BitCoin. TIME ANALYSIS | Output :partA.txt
+"""
+from mrjob.job import MRJob
+import re
+import time
+
+class partA(MRJob):
+
+    def mapper(self, _, line):
+        try:
+            fields = line.split(",")
+            if (len(fields)==5):
+                time_epoch = int(fields[2])
+                day = time.strftime("%Y-%m",time.gmtime(time_epoch))
+                yield(day,1)
+        except:
+            pass
+
+    def reducer(self,day,counts):
+        out = sum(counts)
+        yield(day,out)
+
+if __name__ == '__main__':
+    partA.run()
